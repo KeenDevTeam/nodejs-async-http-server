@@ -43,6 +43,11 @@ class AsyncHTTPServer {
     get isRunning() { return this.started; }
 
     /**
+     * Get HTTP server instance
+     */
+    get HttpServer() { return this.server; }
+
+    /**
      * Start server
      * @param config Configuration object to override the default settings
      */
