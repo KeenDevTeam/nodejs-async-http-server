@@ -9,7 +9,7 @@ type AsyncHTTPServerConfig = {
     /**
      * Either the port or the path to the pipe
      */
-    port?: Number;
+    port?: Number | string;
 
     /**
      * The handler (RequestHandler or any HTTP handler e.g. express application)
