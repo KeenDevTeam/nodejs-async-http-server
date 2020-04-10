@@ -2,6 +2,6 @@
  * Module entry point
  */
 
-import * as lib from './lib';
+import AsyncHTTPServer from './lib/AsyncHTTPServer';
 
-export default { ...lib }
+export default AsyncHTTPServer;
