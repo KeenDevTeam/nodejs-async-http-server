@@ -9,12 +9,12 @@ type AsyncHTTPServerConfig = {
     /**
      * Either the port or the path to the pipe
      */
-    port: Number | string | undefined;
+    port?: Number;
 
     /**
      * The handler (RequestHandler or any HTTP handler e.g. express application)
      */
-    handler: RequestListener | undefined;
+    handler?: RequestListener;
 };
 
 export default AsyncHTTPServerConfig;

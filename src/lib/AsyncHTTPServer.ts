@@ -5,18 +5,18 @@
 import AsyncHTTPServerConfig from './type/AsyncHTTPServerConfig';
 import { Server, createServer } from 'http';
 
-const createConfigObject = (classConfig: AsyncHTTPServerConfig | undefined, userConfig: AsyncHTTPServerConfig | undefined): AsyncHTTPServerConfig => {
+const createConfigObject = (classConfig?: AsyncHTTPServerConfig, userConfig?: AsyncHTTPServerConfig): AsyncHTTPServerConfig => {
 
     if (!classConfig && !userConfig) {
         throw new Error('No configuration has been provided.');
     }
 
     if (!userConfig?.port && !classConfig?.port) {
-        throw new Error('No port/pipe is defined in the config');
+        throw new Error('No port/pipe is defined in the config.');
     }
 
     if (!userConfig?.handler && !classConfig?.handler) {
-        throw new Error('No handler is defined in the config');
+        throw new Error('No handler is defined in the config.');
     }
 
     return {
@@ -27,21 +27,26 @@ const createConfigObject = (classConfig: AsyncHTTPServerConfig | undefined, user
 
 class AsyncHTTPServer {
 
-    private readonly config: AsyncHTTPServerConfig | undefined;
-    private server: Server | null = null;
+    private readonly config?: AsyncHTTPServerConfig;
+    private server?: Server;
     private started: boolean = false;
 
-    constructor(config: AsyncHTTPServerConfig | undefined) {
+    constructor(config?: AsyncHTTPServerConfig) {
 
         // attach config to the class
         this.config = config;
     }
 
     /**
+     * Is the server running
+     */
+    get isRunning() { return this.started; }
+
+    /**
      * Start server
      * @param config Configuration object to override the default settings
      */
-    public start(config: AsyncHTTPServerConfig | undefined): Promise<AsyncHTTPServer> {
+    public start(config?: AsyncHTTPServerConfig): Promise<AsyncHTTPServer> {
 
         return new Promise<AsyncHTTPServer>((resolve, reject) => {
 
@@ -55,20 +60,24 @@ class AsyncHTTPServer {
                 const serverConfig: AsyncHTTPServerConfig = createConfigObject(this.config, config);
                 this.server = createServer(serverConfig.handler);
 
-                this.server.listen(serverConfig.port);
+                // bind events
                 this.server.once('listening', () => {
 
                     this.server?.removeAllListeners('error');
                     this.started = true;
-                    return resolve()
+
+                    return resolve();
                 });
 
                 this.server.once('error', (err: any) => {
 
                     this.server?.removeAllListeners('listening');
-                    // reject the promise
+
                     return reject(err);
                 });
+
+                // try to start the server
+                this.server.listen(serverConfig.port);
             }
             catch (err) {
 
@@ -87,17 +96,18 @@ class AsyncHTTPServer {
             try {
 
                 if (!this.started || !this.server) {
+                    this.started = false;
+                    this.server = undefined;
                     throw new Error('Server is not started');
                 }
 
                 this.server.close(err => {
 
-                    if (err) {
-
-                        return reject(err);
-                    }
+                    if (err) { return reject(err); }
 
                     this.started = false;
+                    this.server = undefined;
+
                     return resolve();
                 });
             }
