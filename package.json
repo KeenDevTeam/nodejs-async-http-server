@@ -1,8 +1,7 @@
 {
-  "name": "@open-project-templates/nodejs-module-typescript",
+  "name": "@speedup/async-http-server",
   "version": "1.0.0",
-  "private": true,
-  "description": "NodeJS module that has been written in TypeScript language",
+  "description": "Asynchronous wrapper for HTTP server",
   "main": "dist/index.js",
   "scripts": {
     "clean": "rimraf dist/",
@@ -14,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/open-project-templates/nodejs-module-typescript.git"
+    "url": "git@github.com:SpeedUp-io/nodejs-async-http-server.git"
   },
   "keywords": [
     "open-project",
@@ -29,9 +28,9 @@
   "author": "Open Project Templates",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/open-project-templates/nodejs-module-typescript/issues"
+    "url": "https://github.com/SpeedUp-io/nodejs-async-http-server/issues"
   },
-  "homepage": "https://github.com/open-project-templates/nodejs-module-typescript#readme",
+  "homepage": "https://github.com/SpeedUp-io/nodejs-async-http-server#readme",
   "devDependencies": {
     "@types/chai": "^4.2.9",
     "@types/mocha": "^7.0.1",
