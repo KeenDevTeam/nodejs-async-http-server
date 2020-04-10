@@ -9,23 +9,21 @@
     "rebuild": "run-s clean build",
     "test": "mocha --require ts-node/register tests/index.ts",
     "coverage": "nyc npm run test",
-    "prepublish": "run-s rebuild coverage"
+    "prepublish": "run-s test rebuild"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:SpeedUp-io/nodejs-async-http-server.git"
   },
   "keywords": [
-    "open-project",
-    "open-project-template",
-    "template",
-    "nodejs",
-    "typescript",
-    "npm",
-    "module"
+    "speedup",
+    "http",
+    "http-server",
+    "async",
+    "asynchronous"
   ],
   "types": "dist/index.d.ts",
-  "author": "Open Project Templates",
+  "author": "SpeedUP",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/SpeedUp-io/nodejs-async-http-server/issues"
