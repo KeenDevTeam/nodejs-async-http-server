@@ -2,9 +2,14 @@
  * Configuration type
  */
 
-import { RequestListener } from "http";
+import { RequestListener } from 'http';
 
 type AsyncHTTPServerConfig = {
+
+    /**
+     * Hostname/IP address your server binds to
+     */
+    host?: string;
 
     /**
      * Either the port or the path to the pipe
