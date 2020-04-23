@@ -1,6 +1,6 @@
 {
   "name": "@speedup/async-http-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Asynchronous wrapper for HTTP server",
   "main": "dist/index.js",
   "scripts": {
@@ -41,8 +41,6 @@
     "nyc": "^15.0.0",
     "portscanner": "^2.2.0",
     "rimraf": "^3.0.2",
-    "ts-interface-builder": "^0.2.1",
-    "ts-interface-checker": "^0.1.10",
     "ts-node": "^8.6.2",
     "typescript": "^3.8.2"
   },
@@ -63,5 +61,6 @@
       "lcov"
     ],
     "all": true
-  }
+  },
+  "dependencies": {}
 }

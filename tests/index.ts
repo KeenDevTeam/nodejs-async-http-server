@@ -6,8 +6,9 @@ import { RequestListener } from 'http';
 
 import 'mocha';
 import { expect } from 'chai';
-import { checkPortStatus, findAPortNotInUse } from 'portscanner';
+import { checkPortStatus, findAPortNotInUse, findAPortInUse } from 'portscanner';
 import axios from 'axios';
+import { msleep } from 'sleep';
 
 import AsyncHTTPServer from '../src';
 
@@ -205,24 +206,18 @@ describe('SpeedUP|Async HTTP Server', () => {
             }
         });
 
-        it('should throw error if the port has been already opened', async () => {
-
-            const port = await findAPortNotInUse(5000, 9000);
+        it('should throw error if the socket has been already opened', async () => {
 
             const instance1 = new AsyncHTTPServer({
-                port,
+                port: './test.sck',
                 handler
             });
             expect(instance1.isRunning).to.be.eq(false);
 
             await instance1.start();
-            expect(instance1.isRunning).to.be.eq(true);
-            let portStatus = await checkPortStatus(port);
-            expect(portStatus).to.be.eq('open');
-
 
             const instance2 = new AsyncHTTPServer({
-                port,
+                port: './test.sck',
                 handler
             });
             expect(instance2.isRunning).to.be.eq(false);
@@ -234,13 +229,37 @@ describe('SpeedUP|Async HTTP Server', () => {
             }
             catch (err) {
 
-                expect(err).to.have.property('message').that.is.not.eq('UnexpectedError');
+                expect(err.message).not.be.eq('UnexpectedError');
+                expect(err.message).to.be.eq('listen EADDRINUSE: address already in use ./test.sck');
             }
             finally {
 
                 await instance1.stop();
-                portStatus = await checkPortStatus(port);
-                expect(portStatus).to.be.eq('closed');
+            }
+        });
+
+        it('should throw error if the port has been already opened', async () => {
+
+            const port = await findAPortInUse(1024, 65535, '127.0.0.1');
+
+            const instance1 = new AsyncHTTPServer({
+                host: '127.0.0.1',
+                port: port,
+                handler
+            });
+
+            // ensure the port is open by another application
+            expect(instance1.isRunning).to.be.eq(false);
+            let portStatus = await checkPortStatus(port);
+            expect(portStatus).to.be.eq('open');
+
+            try {
+
+                await instance1.start();
+                throw new Error('UnexpectedError');
+            }
+            catch(err) {
+                expect(err.code).to.be.eq('EADDRINUSE');
             }
         });
     });

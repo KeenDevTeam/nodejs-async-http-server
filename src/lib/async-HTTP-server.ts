@@ -4,6 +4,7 @@
 
 import AsyncHTTPServerConfig from './type/async-HTTP-server-config';
 import { Server, createServer } from 'http';
+import { ListenOptions } from 'net';
 
 const createConfigObject = (classConfig?: AsyncHTTPServerConfig, userConfig?: AsyncHTTPServerConfig): AsyncHTTPServerConfig => {
 
@@ -20,6 +21,7 @@ const createConfigObject = (classConfig?: AsyncHTTPServerConfig, userConfig?: As
     }
 
     return {
+        host: userConfig?.host || classConfig?.host,
         port: userConfig?.port || classConfig?.port,
         handler: userConfig?.handler || classConfig?.handler
     };
@@ -58,7 +60,7 @@ class AsyncHTTPServer {
             try {
 
                 if (this.started) {
-                    throw new Error('Server has been already started.');
+                    return reject(new Error('Server has been already started.'));
                 }
 
                 // merge configurations
@@ -69,34 +71,39 @@ class AsyncHTTPServer {
                 this.server.once('listening', () => {
 
                     this.server?.removeAllListeners('error');
+                    this.server?.removeAllListeners('listening');
                     this.started = true;
 
-                    return resolve();
+                    return resolve(this);
                 });
 
                 this.server.once('error', (err: any) => {
 
                     this.server?.removeAllListeners('listening');
+                    this.server?.removeAllListeners('error');
 
                     return reject(err);
                 });
 
                 // try to start the server
 
-                if (serverConfig.host) {
+                const listenOptions: ListenOptions = {};
 
-                    if (!serverConfig.port || typeof serverConfig.port !== 'number') {
-                        throw new Error('\'Port\' must be a valid port number when you set hostname/IP address.');
-                    }
+                // TCP/IP endpoint
+                if (typeof serverConfig.port === 'number') {
 
-                    // bind to hostname/IP address
-                    this.server.listen(serverConfig.port, serverConfig.host);
+                    listenOptions.host = serverConfig.host;
+                    listenOptions.port = serverConfig.port;
                 }
-                else {
 
-                    // bind to port number or unix socket path
-                    this.server.listen(serverConfig.port);
+                // unix socket or windows pipe
+                if (typeof serverConfig.port === 'string') {
+
+                    listenOptions.path = serverConfig.port as string;
                 }
+
+                // start server
+                this.server.listen(listenOptions);
             }
             catch (err) {
 
@@ -117,7 +124,7 @@ class AsyncHTTPServer {
                 if (!this.started || !this.server) {
                     this.started = false;
                     this.server = undefined;
-                    throw new Error('Server is not started');
+                    return reject(new Error('Server is not started'));
                 }
 
                 this.server.close(err => {
