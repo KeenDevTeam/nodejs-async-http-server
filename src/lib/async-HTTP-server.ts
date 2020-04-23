@@ -2,7 +2,7 @@
  * Library index
  */
 
-import AsyncHTTPServerConfig from './type/AsyncHTTPServerConfig';
+import AsyncHTTPServerConfig from './type/async-HTTP-server-config';
 import { Server, createServer } from 'http';
 
 const createConfigObject = (classConfig?: AsyncHTTPServerConfig, userConfig?: AsyncHTTPServerConfig): AsyncHTTPServerConfig => {
@@ -82,7 +82,21 @@ class AsyncHTTPServer {
                 });
 
                 // try to start the server
-                this.server.listen(serverConfig.port);
+
+                if (serverConfig.host) {
+
+                    if (!serverConfig.port || typeof serverConfig.port !== 'number') {
+                        throw new Error('\'Port\' must be a valid port number when you set hostname/IP address.');
+                    }
+
+                    // bind to hostname/IP address
+                    this.server.listen(serverConfig.port, serverConfig.host);
+                }
+                else {
+
+                    // bind to port number or unix socket path
+                    this.server.listen(serverConfig.port);
+                }
             }
             catch (err) {
 
