@@ -8,7 +8,6 @@ import 'mocha';
 import { expect } from 'chai';
 import { checkPortStatus, findAPortNotInUse, findAPortInUse } from 'portscanner';
 import axios from 'axios';
-import { msleep } from 'sleep';
 
 import AsyncHTTPServer from '../src';
 
